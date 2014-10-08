@@ -30,9 +30,9 @@ possible_steps((StartX, StartY), Max, Walks) :-
 walk((Cx, Cy), (Gx, Gy), Max, Path, NSteps) :-
         Cx =:= Gx,
         Cy =:= Gy,
-        print('Reached goal!\n'),
-        print(Path),
-        print('\n'),
+        %print('Reached goal!\n'),
+        %print(Path),
+        %print('\n'),
         length(Path, NSteps).
 
 walk(Current, Goal, Max, Path, NSteps) :-
@@ -42,8 +42,21 @@ walk(Current, Goal, Max, Path, NSteps) :-
         %sleep(1),
         walk(Step, Goal, Max, [Step | Path], NSteps).
 
-find(Start, End, Max, Steps) :-
+%Find a path from Start to End
+find(Start, End, Max) :-
         walk(Start, End, Max, [], Steps),
         print('Found a path with '),
         print(Steps),
         print(' steps.\n'), !.
+
+find_min(_, _, _, Attempts, Best) :-
+        Attempts =:= 0,
+        X is Best,
+        print('The best attempt was '),
+        print(X),
+        print('.\n').
+        
+
+find_min(Start, End, Max, Attempts, Best) :-
+        walk(Start, End, Max, [], Steps),
+        find_min(Start, End, Max, Attempts-1, min(Best, Steps)).
