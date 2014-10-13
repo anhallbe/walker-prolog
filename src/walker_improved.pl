@@ -32,9 +32,9 @@ walk((Xs, Ys), (Xe, Ye), _, _, Walked, Path) :-
 %True if I can move in any direction
 walk(Current, Goal, Obstacles, N, Walked, Path) :-
         walk_right(Current, Goal, Obstacles, N, Walked, Path);
-        walk_down(Current, Goal, Obstacles, N, Walked, Path);
         walk_left(Current, Goal, Obstacles, N, Walked, Path);
-        walk_up(Current, Goal, Obstacles, N, Walked, Path).
+        walk_up(Current, Goal, Obstacles, N, Walked, Path);
+        walk_down(Current, Goal, Obstacles, N, Walked, Path).
 
 %True if I can move to the right
 walk_right((Xc, Yc), Goal, Obstacles, N, Walked, Path) :-
@@ -58,7 +58,7 @@ walk_down((Xc, Yc), Goal, Obstacles, N, Walked, Path) :-
 walk_left((Xc, Yc), Goal, Obstacles, N, Walked, Path) :-
         Xn is Xc-1,
         Yn is Yc,
-        Xn > 0,
+        Xn >= 0,
         \+memberchk((Xn, Yn), Walked),
         \+memberchk((Xn, Yn), Obstacles),
         walk((Xn,Yn), Goal, Obstacles, N, [(Xn,Yn)|Walked], Path).
@@ -67,7 +67,7 @@ walk_left((Xc, Yc), Goal, Obstacles, N, Walked, Path) :-
 walk_up((Xc, Yc), Goal, Obstacles, N, Walked, Path) :-
         Xn is Xc,
         Yn is Yc-1,
-        Yn > 0,
+        Yn >= 0,
         \+memberchk((Xn, Yn), Walked),
         \+memberchk((Xn, Yn), Obstacles),
         walk((Xn,Yn), Goal, Obstacles, N, [(Xn,Yn)|Walked], Path).
