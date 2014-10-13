@@ -28,17 +28,17 @@ walk(Start, End, Max, Walked, Length) :-
 
 %Try walking in all directions
 walk(Start, End, Max, Walked, Length) :-
-        sleep(1),
+        %sleep(1),
         possible_steps(Start, Max, Walked, (Right, Left, Up, Down)),
         print('Right '),
         walk(Right, End, Max, [Start|Walked], LR),
-        sleep(1),
+        %sleep(1),
         print('Down '),
         walk(Down, End, Max, [Start|Walked], LD),
-        sleep(1),
+        %sleep(1),
         print('Left '),
         walk(Left, End, Max, [Start|Walked], LL),
-        sleep(1),
+        %sleep(1),
         print('Up '),
         walk(Up, End, Max, [Start|Walked], LU),
         %Length is min(LR, min(LL, min(LU, LD))).
@@ -59,13 +59,17 @@ walk(Start, End, Max, Walked, Length) :-
 %Give a list of possible walk destinations
 possible_steps((StartX, StartY), Max, Walked, Walks) :-
         %Right?
-        ((StartX < Max, \+member((StartX+1, StartY), Walked)) -> Right = (StartX+1, StartY); Right = blocked),
+        Xright is StartX+1,
+        Xleft is StartX-1,
+        Yup is StartY-1,
+        Ydown is StartY+1,
+        ((StartX < Max, \+member((Xright, StartY), Walked)) -> Right = (Xright, StartY); Right = blocked),
         %Left?
-        (StartX > 0, \+member((StartX-1, StartY), Walked) -> Left = (StartX-1, StartY); Left = blocked),
+        (StartX > 0, \+member((Xleft, StartY), Walked) -> Left = (Xleft, StartY); Left = blocked),
         %Up?
-        (StartY > 0, \+member((StartX, StartY-1), Walked) -> Up = (StartX, StartY-1); Up = blocked),
+        (StartY > 0, \+member((StartX, Yup), Walked) -> Up = (StartX, Yup); Up = blocked),
         %Down?
-        (StartY < Max, \+member((StartX, StartY+1), Walked) -> Down = (StartX, StartY+1); Down = blocked),
+        (StartY < Max, \+member((StartX, Ydown), Walked) -> Down = (StartX, Ydown); Down = blocked),
         %print('Walks: ('),
         %print(Right),
         %print(') ('),
