@@ -1,6 +1,12 @@
+%Andreas Hallberg, ID2213 Logic Programming, KTH, 2014
+:- module(walker, [find/6]).
+
 :- use_module(library(lists)).
 
-%Find a path from Start to End through a NxN world.
+%Find a path from Start to End through a NxN grid, avoiding all Obstacles.
+%It finds the shortest possible Path, i.e the one with the least Steps.
+%Start and End are coordinates (X,Y), with values [0,Coord,N)
+%Obstacles and Path is a list of coordinates. Steps is an integer.
 find(Start, End, Obstacles, N, Path, Steps) :-
         print('Looking for paths...\n'),
         findall(X, walk(Start, End, Obstacles, N, [Start], X), All),
@@ -29,7 +35,7 @@ walk((Xs, Ys), (Xe, Ye), _, _, Walked, Path) :-
         Path = Walked.
         %reverse(Walked, Path).
 
-%True if I can move in any direction
+%True if I can move in some direction
 walk(Current, Goal, Obstacles, N, Walked, Path) :-
         walk_right(Current, Goal, Obstacles, N, Walked, Path);
         walk_left(Current, Goal, Obstacles, N, Walked, Path);
