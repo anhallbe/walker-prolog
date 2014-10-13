@@ -2,10 +2,23 @@
 
 %Find a path from Start to End through a NxN world.
 find(Start, End, N, Path, Steps) :-
+        print('Looking for paths...\n'),
         findall(X, walk(Start, End, N, [], X), All),
+        
+        print('Found '),
+        length(All, Total),
+        print(Total),
+        print(' paths, finding shortest...\n'),
+        
         shortest_path(All, Shortest),
         reverse(Shortest, Path),
-        length(Path, Steps).
+        length(Path, Steps),
+        
+        print('Shortest path ('),
+        print(Steps),
+        print(' steps): '),
+        print(Path),
+        print('.\n').
         %walk(Start, End, N, [], Path),
         %length(Path, Steps).
 
