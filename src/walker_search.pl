@@ -8,33 +8,46 @@
 init :-
         use_module(library(random)).
 
-%Reached end of world
-walk(Start, End, Max, Walked, Success, Length) :-
-        Start = blocked,
-        Success = no,
-        Length = 9999999.
-
-%Walked to somewhere I've been before
-walk(Start, End, Max, Walked, Success, Length) :-
-        memberchk(Start, Walked),
-        Success = no,
-        Length = 9999999.
-
 %Reached the end (goal)
-walk((Xs,Ys), (Xe,Ye), _, Walked, Success, Length) :-
+walk((Xs,Ys), (Xe,Ye), _, Walked, Length) :-
         Xs =:= Xe,
         Ys =:= Ye,
-        Success = yes,
         length(Walked, Length).
 
+%Reached end of world
+walk(Start, End, Max, Walked, Length) :-
+        Start = blocked,
+        Length is 9999999,
+        print('(blocked) ').
+
+%Walked to somewhere I've been before
+walk(Start, End, Max, Walked, Length) :-
+        member(Start, Walked),
+        Length is 9999999,
+        print('(already been there..) ').
+
 %Try walking in all directions
-walk(Start, End, Max, Walked, Success, Length) :-
-        possible_steps(Start, Max, (Right, Left, Up, Down)),
-        %(Right \= blocked, \+memberchk(Right, Walked) -> walk(Right, End, [Start|Walked], SuccessRight, LengthRight)).
-        walk(Right, End, Max, [Start|Walked], Success, Length);
-        walk(Left, End, Max, [Start|Walked], Success, Length);
-        walk(Up, End, Max, [Start|Walked], Success, Length);
-        walk(Down, End, Max, [Start|Walked], Success, Length).
+walk(Start, End, Max, Walked, Length) :-
+        sleep(1),
+        possible_steps(Start, Max, Walked, (Right, Left, Up, Down)),
+        print('Right '),
+        walk(Right, End, Max, [Start|Walked], LR),
+        sleep(1),
+        print('Down '),
+        walk(Down, End, Max, [Start|Walked], LD),
+        sleep(1),
+        print('Left '),
+        walk(Left, End, Max, [Start|Walked], LL),
+        sleep(1),
+        print('Up '),
+        walk(Up, End, Max, [Start|Walked], LU),
+        %Length is min(LR, min(LL, min(LU, LD))).
+        Length is min(999, min(LR, min(LL, min(LU, LD)))).
+        
+        %(Right \= blocked -> walk(Right, End, Max, [Start|Walked], Length); print('Right blocked!\n')),
+        %(Left \= blocked -> walk(Left, End, Max, [Start|Walked], Length); print('Left blocked!\n')),
+        %(Up \= blocked -> walk(Up, End, Max, [Start|Walked], Length); print('Up blocked!\n')),
+        %(Down \= blocked -> walk(Down, End, Max, [Start|Walked], Length); print('Down blocked!\n')).
 
         %walk(Right, End, Max, [Start|Walked], SuccessRight, LengthRight),
         %walk(Left, End, Max, [Start|Walked], SuccessLeft, LengthLeft),
@@ -44,14 +57,22 @@ walk(Start, End, Max, Walked, Success, Length) :-
         %Length = min(LengthRight, min(LengthLeft, min(LengthUp, LengthDown))).
 
 %Give a list of possible walk destinations
-possible_steps((StartX, StartY), Max, Walks) :-
+possible_steps((StartX, StartY), Max, Walked, Walks) :-
         %Right?
-        (StartX < Max -> Right = (StartX+1, StartY); Right = blocked),
+        ((StartX < Max, \+member((StartX+1, StartY), Walked)) -> Right = (StartX+1, StartY); Right = blocked),
         %Left?
-        (StartX > 0 -> Left = (StartX-1, StartY); Left = blocked),
+        (StartX > 0, \+member((StartX-1, StartY), Walked) -> Left = (StartX-1, StartY); Left = blocked),
         %Up?
-        (StartY > 0 -> Up = (StartX, StartY-1); Up = blocked),
+        (StartY > 0, \+member((StartX, StartY-1), Walked) -> Up = (StartX, StartY-1); Up = blocked),
         %Down?
-        (StartY < Max -> Down = (StartX, StartY+1); Down = blocked),
-        
+        (StartY < Max, \+member((StartX, StartY+1), Walked) -> Down = (StartX, StartY+1); Down = blocked),
+        %print('Walks: ('),
+        %print(Right),
+        %print(') ('),
+        %print(Left),
+        %print(') ('),
+        %print(Up),
+        %print(') ('),
+        %print(Down),
+        %print(')\n'),
         Walks = (Right, Left, Up, Down).
