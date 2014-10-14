@@ -5,8 +5,8 @@
 
 
 %Initiate random module
-%init :-
-%        use_module(library(random)).
+init :-
+        use_module(library(random)).
 
 %Walk one step in a random direction
 step(Before, Max, After) :-

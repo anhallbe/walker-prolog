@@ -1,6 +1,6 @@
-\documentclass[]{article}
+\documentclass[a4paper]{article}
 \usepackage[pdftex]{graphicx}
-\usepackage{placeins}
+\usepackage[section]{placeins}
 
 %opening
 \title{Prolog Programming Project - Walker}
@@ -11,12 +11,26 @@
 \maketitle
 
 \section{Problem}
-Find the shortest path between two points in a NxN grid.
+The program (Walker) finds the shortest path from one point to another in a NxN grid. The paths consist of a number of horizontal and vertical steps (no diagonals). The shortest path through such a grid is always the Manhattan Distance, i.e the sum of the horizontal and vertical distance between two points, so to make the problem more interesting I've added obstacles to the grid. Figure \ref{grid} shows an example of the problem.
+
 \begin{figure}
 \centering
-	\includegraphics[scale=0.8]{prolog_grid}
-	\caption{The Grid}
+	\includegraphics[scale=0.6]{prolog_grid}
+	\caption{Example of a grid with 5 obstacles, one of the shortest paths (11 steps) is represented by the red line.}
 	\label{grid}
 \end{figure}
+\FloatBarrier
 
+\section{Solution}
+There are many ways to solve the problem. I experimented with two different solutions:
+\begin{itemize}
+\item{\textbf{Random Walker}} From any given point, walk in a (\textbf{one}) randomly selected direction (Left, Right, Up, Down). Do this until a path has been found from the starting point to the end point. To find the shortest path, simply run the program multiple times and compare the path length for each solution. The advantage of this is that it's possible to quickly find a path without testing every possible step. On the other hand, there is no guarantee that it will find a path at all during one execution, and there is no way to check whether the path is actually the shortest possible.
+
+\item{\textbf{Improved Walker}} From any given point, try walking in \textbf{all} directions. Every combination of steps that takes the walker from the Start point to the End will be a solution. When all solutions are found, their path lengths are compared to find the shortest. The advantage of this strategy is that it is guaranteed to find \textbf{all} paths, including the shortest one. The disadvantages of the strategy is that it will keep looking for other paths even though the shortest has been found, and that the number of possible paths grows exponentially with the size of the grid.
+\end{itemize}
+
+\section{The Walker Module}
+I implemented both strategies, but I preferred the Improved Walker since it is guaranteed to actually find the shortest path, and finding all possible paths might be of more use when solving other problems.
+
+It exposes one predicate \textit{find(+Start, +End, +Obstacles, +N, -Path, -Steps)}. Start and End are coordinates with the format (X,Y), where  ${Coordinates \in [0,N)}$. Obstacles and Path are list of coordinates, N is the size of the grid and Steps is the length of the resulting shortest Path.
 \end{document}
