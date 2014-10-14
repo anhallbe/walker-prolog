@@ -9,30 +9,29 @@
 %Obstacles and Path is a list of coordinates. Steps is an integer.
 find(Start, End, Obstacles, N, Path, Steps) :-
         print('Looking for paths...\n'),
-        findall(X, walk(Start, End, Obstacles, N, [Start], X), All),
+        findall(X, walk(Start, End, Obstacles, N, [Start], X), All), %Find all paths
         
         print('Found '),
-        length(All, Total),
+        length(All, Total),     %Total number of paths
         print(Total),
         print(' paths, finding shortest...\n'),
         
-        shortest_path(All, Shortest),
-        reverse(Shortest, Path),
-        length(Path, Steps),
+        shortest_path(All, Shortest),   %Find the shortest
+        reverse(Shortest, Path),        %sort from Start to End
+        length(Path, StepsExcludeStart),
+        Steps is StepsExcludeStart - 1,
         
         print('Shortest path ('),
         print(Steps),
         print(' steps): '),
         print(Path),
         print('.\n').
-        %walk(Start, End, N, [], Path),
-        %length(Path, Steps).
 
 %Base: Found the goal, no need to walk further.
 walk((Xs, Ys), (Xe, Ye), _, _, Walked, Path) :-
-        Xs =:= Xe,
+        Xs =:= Xe,      %Current position is the same as the Goal/End
         Ys =:= Ye,
-        Path = Walked.
+        Path = Walked.  
         %reverse(Walked, Path).
 
 %True if I can move in some direction
@@ -44,12 +43,12 @@ walk(Current, Goal, Obstacles, N, Walked, Path) :-
 
 %True if I can move to the right
 walk_right((Xc, Yc), Goal, Obstacles, N, Walked, Path) :-
-        Xn is Xc+1,
-        Yn is Yc,
+        Xn is Xc+1,                             %Next X-coordinate
+        Yn is Yc,                               %Next Y-coordinate
         Xn < N,
-        \+memberchk((Xn, Yn), Walked),
-        \+memberchk((Xn, Yn), Obstacles),
-        walk((Xn,Yn), Goal, Obstacles, N, [(Xn,Yn)|Walked], Path).
+        \+memberchk((Xn, Yn), Walked),          %Have I already visited the coordinate?
+        \+memberchk((Xn, Yn), Obstacles),       %Is it an obstacle?
+        walk((Xn,Yn), Goal, Obstacles, N, [(Xn,Yn)|Walked], Path).      %Walk there
 
 %True if I can move down
 walk_down((Xc, Yc), Goal, Obstacles, N, Walked, Path) :-
@@ -83,7 +82,7 @@ walk_up((Xc, Yc), Goal, Obstacles, N, Walked, Path) :-
 shortest_path([P|T], Shortest) :-
         shortest_path(T, P, Shortest).
 
-%Helper predicates
+%Helper predicates to find the shortest path
 shortest_path([], Shorter, Res) :-
         Res = Shorter.
 
